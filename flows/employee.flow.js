@@ -9,6 +9,11 @@ class EmployeeFlow {
         await this.employeePage.fillEmployee(nombre, apellido);
         await this.employeePage.saveEmployee();
     }
+
+    async buscarEmpleado(nombre) {
+        await this.employeePage.goToPIM(); // 👈 vuelve al listado
+        await this.employeePage.buscarEmpleado(nombre);
+    }
 }
 
 module.exports = EmployeeFlow;

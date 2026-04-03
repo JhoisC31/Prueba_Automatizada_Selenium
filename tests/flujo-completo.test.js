@@ -5,7 +5,7 @@ const LoginFlow = require('../flows/login.flow');
 const EmployeeFlow = require('../flows/employee.flow');
 const { expect } = require('chai');
 
-describe('Flujo completo OrangeHRM', function () {
+describe('Flujo OrangeHRM', function () {
     let driver;
     let loginPage;
     let employeePage;
@@ -30,18 +30,20 @@ describe('Flujo completo OrangeHRM', function () {
         }
     });
 
-    it('Flujo completo: negativo → positivo → crear empleado', async () => {
 
-        // Credenciales no correctas
+    //Flujo Completo
+    it('Flujo', async () => {
+
+        // Login credenciales no correctas
         await loginFlow.loginIncorrecto();
         await driver.sleep(3000);
 
         let pageSource = await driver.getPageSource();
         expect(pageSource).to.include('Invalid credentials');
 
-        // Credenciales correctas
+        // Login credenciales correctas
         await loginFlow.loginCorrecto();
-        await driver.sleep(3000);
+        await driver.sleep(4000);
 
         let url = await driver.getCurrentUrl();
         expect(url).to.include('dashboard');
@@ -49,15 +51,21 @@ describe('Flujo completo OrangeHRM', function () {
 
 
 
-
-
-        // 👨‍💼 CREAR EMPLEADO
-        const nombre = 'Juan' + Math.floor(Math.random() * 1000);
+        //formulario crear empleado
+        const nombre = 'HERNESTO' + Math.floor(Math.random() * 1000);
 
         await employeeFlow.crearEmpleado(nombre, 'Test');
-        await driver.sleep(3000);
+        await driver.sleep(4000);
 
         url = await driver.getCurrentUrl();
         expect(url).to.include('pim');
+
+
+        //busqueda
+        await employeeFlow.buscarEmpleado(nombre);
+        await driver.sleep(3000);
+
+        let pagesource = await driver.getPageSource();
+        expect(pagesource).to.include(nombre);
     });
 });
