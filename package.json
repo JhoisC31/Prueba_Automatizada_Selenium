@@ -6,6 +6,8 @@
     "chai": "^6.2.2",
     "chromedriver": "^146.0.6",
     "mocha": "^11.7.5",
+    "mochawesome": "^7.1.4",
+    "screenshot-desktop": "^1.15.3",
     "selenium-webdriver": "^4.41.0"
   }
 }

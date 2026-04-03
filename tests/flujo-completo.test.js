@@ -7,65 +7,58 @@ const { expect } = require('chai');
 
 describe('Flujo OrangeHRM', function () {
     let driver;
-    let loginPage;
-    let employeePage;
     let loginFlow;
     let employeeFlow;
 
-    this.timeout(40000);
+    this.timeout(60000);
 
     before(async () => {
         driver = await buildDriver();
-
-        loginPage = new LoginPage(driver);
-        employeePage = new EmployeePage(driver);
-
-        loginFlow = new LoginFlow(loginPage);
-        employeeFlow = new EmployeeFlow(employeePage);
+        loginFlow = new LoginFlow(new LoginPage(driver));
+        employeeFlow = new EmployeeFlow(new EmployeePage(driver));
     });
 
     after(async () => {
-        if (driver) {
-            await driver.quit();
-        }
+        if (driver) await driver.quit();
     });
 
+    it('Flujo completo: login, crear, buscar y eliminar empleado', async () => {
 
-    //Flujo Completo
-    it('Flujo', async () => {
-
-        // Login credenciales no correctas
+        // Login incorrecto
         await loginFlow.loginIncorrecto();
         await driver.sleep(3000);
+        const sourceLoginFail = await driver.getPageSource();
+        expect(sourceLoginFail).to.include('Invalid credentials');
 
-        let pageSource = await driver.getPageSource();
-        expect(pageSource).to.include('Invalid credentials');
-
-        // Login credenciales correctas
+        // Login correcto
         await loginFlow.loginCorrecto();
         await driver.sleep(4000);
+        const urlDashboard = await driver.getCurrentUrl();
+        expect(urlDashboard).to.include('dashboard');
 
-        let url = await driver.getCurrentUrl();
-        expect(url).to.include('dashboard');
-
-
-
-
-        //formulario crear empleado
-        const nombre = 'HERNESTO' + Math.floor(Math.random() * 1000);
-
+        // Crear empleado
+        const nombre = 'JUAN' + Math.floor(Math.random() * 1000);
         await employeeFlow.crearEmpleado(nombre, 'Test');
-        await driver.sleep(4000);
+        await driver.sleep(8000);
+        const urlPim = await driver.getCurrentUrl();
+        expect(urlPim).to.include('pim');
 
-        url = await driver.getCurrentUrl();
-        expect(url).to.include('pim');
-
-
-        //busqueda
+        // Buscar empleado
         await employeeFlow.buscarEmpleado(nombre);
-        await driver.sleep(3000);
+        await driver.sleep(8000);
+        const sourceBusqueda = await driver.getPageSource();
+        expect(sourceBusqueda).to.include(nombre);
 
-        let pagesource = await driver.getPageSource();
-        expect(pagesource).to.include(nombre);
+        // Eliminar empleado
+        await employeeFlow.eliminarEmpleado(nombre);
+        await driver.sleep(5000);
+
+        // Verificar que fue eliminado
+        await employeeFlow.buscarEmpleado(nombre);
+        await driver.sleep(5000);
+        const sourceEliminado = await driver.getPageSource();
+        expect(sourceEliminado).to.not.include(nombre);
+
     });
+
 });

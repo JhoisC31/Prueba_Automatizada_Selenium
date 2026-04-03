@@ -11,8 +11,14 @@ class EmployeeFlow {
     }
 
     async buscarEmpleado(nombre) {
-        await this.employeePage.goToPIM(); // 👈 vuelve al listado
+        await this.employeePage.goToPIM();
         await this.employeePage.buscarEmpleado(nombre);
+    }
+
+    async eliminarEmpleado(nombre) {
+        await this.employeePage.goToPIM();
+        await this.employeePage.buscarEmpleado(nombre);
+        await this.employeePage.eliminarPrimerEmpleado();
     }
 }
 
