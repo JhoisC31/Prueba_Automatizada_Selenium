@@ -10,7 +10,7 @@ class LoginFlow {
 
     async loginIncorrecto() {
         await this.loginPage.open();
-        await this.loginPage.login('Admin', 'wrongpass');
+        await this.loginPage.login('Admin', 'incorrecto');
     }
 }
 
